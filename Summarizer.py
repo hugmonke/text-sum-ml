@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
+#from TrainTextSum import LanguageModel, Head, MultiHeadAttention, TransBlock, FeedFoward
 import mmap
 import random
 import pickle
@@ -9,18 +10,15 @@ import argparse
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 batch_size = 128
 block_size = 128
-max_iters = 21
+max_iters = 100
 learning_rate = 1e-4
-eval_iters = 20
-
-#n_embd - Wymiar wektorow i ukrytych stanow
+eval_iters = 100
 n_embd = 384
-#n_head - ilosc "heads" - mechanizmow/warstw wykonujacych okreslone zadanie
 n_head = 1
 n_layer = 1
 dropout = 0.2
 chars = ""
-    
+
 class Head(nn.Module):
     """One head of self-attention"""
 
@@ -114,7 +112,7 @@ class LanguageModel(nn.Module):
         self.token_embedding_table = nn.Embedding(vocab_size, n_embd)
         self.position_embedding_table = nn.Embedding(block_size, n_embd)
         self.blocks = nn.Sequential(*[TransBlock(n_embd, n_head=n_head) for _ in range(n_layer)])
-        self.ln_f = nn.LayerNorm(n_embd)
+        self.ln_f = nn.LayerNorm(n_embd) # final layer norm
         self.lm_head = nn.Linear(n_embd, vocab_size)
         self.apply(self._init_weights)
 
@@ -152,9 +150,10 @@ class LanguageModel(nn.Module):
     def generate(self, index, max_new_tokens):
         # Index to lista (B, T) indeksow w aktualnym kontekscie
         for _ in range(max_new_tokens):
-
+            
+            index_cond = index[:, -block_size:]
             # Znajdz predykcje
-            logits, loss = self.forward(index, device)
+            logits, loss = self.forward(index_cond)
             # Skup sie na ostatnim kroku czasowym - staje sie (B, C)
             logits = logits[:, -1, :] 
             # Uzyj softmax dla znalezienia prawdopodobienstw (softmax - znormalizowana funkcja wykladnicza) - (B, C)
@@ -167,104 +166,42 @@ class LanguageModel(nn.Module):
             #torch.cat - Concatenates the given sequence of seq tensors in the given dimension. 
             # All tensors must either have the same shape (except in the concatenating dimension) or be a 1-D empty tensor with size (0,).
         return index
-
-
-
-def get_random_chunk(split, encode):
-    # Memory map dla malych wycinkow tekstu z pojedynczego pliku o dowolnym rozmiarze
-    filename = "train_split.txt" if split == 'train' else "validate_split.txt"
-
-    with open(filename, 'rb') as f:
-        with mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ) as mm:
-            # Ustal rozmiar pliku i losowa pozycje startowa do czytania
-            file_size = len(mm)
-            start_pos = random.randint(0, (file_size) - block_size*batch_size)
-
-            # Szukaj losowej pozycji i sczytaj blok tekstu
-            mm.seek(start_pos)
-            block = mm.read(block_size*batch_size-1)
-
-            # Dekoduj blok na string, ignoruj bledne sekwencje bajtow
-            decoded_block = block.decode('utf-8', errors='ignore').replace('\r', '')
-            
-            # Trenuj i testuj odcinki (splits)
-            data = torch.tensor(encode(decoded_block), dtype=torch.long)
-            
-    return data
-
-def get_batch(split, encode):
-    data = get_random_chunk(split, encode)
-    ix = torch.randint(len(data) - block_size, (batch_size,))
-    x = torch.stack([data[i:i+block_size] for i in ix])
-    y = torch.stack([data[i+1:i+block_size+1] for i in ix])
-    x, y = x.to(device), y.to(device)
-    return x, y
-
-@torch.no_grad()
-def estimate_loss(model, eval_iters, encode):
-    out = {}
-    model.eval()
-    for split in ['train', 'validate']:
-        losses = torch.zeros(eval_iters)
-        for k in range(eval_iters):
-            X, Y = get_batch(split, encode)
-            logits, loss = model(X, Y)
-            losses[k] = loss.item()
-        out[split] = losses.mean()
-    model.train()
-    return out
-
-def main():    
-    print("Starting...")
-    with open("vocab.txt", 'r', encoding='utf-8') as voca:
-        vocabulary = voca.read()
-        chars = sorted(list(set(vocabulary)))
+    
+    
+def main():  
+    with open("vocab.txt", 'r', encoding='utf-8') as f:
+            text = f.read()
+            chars = sorted(list(set(text)))
             
     vocab_size = len(chars)
-    
+
     string_int_dict = { ch:i for i,ch in enumerate(chars) }
     int_string_dict = { i:ch for i,ch in enumerate(chars) }
     encode = lambda string: [string_int_dict[char] for char in string]
-    #decode = lambda num: ''.join([int_string_dict[i] for i in num])
-    
+    decode = lambda num: ''.join([int_string_dict[i] for i in num])
+
     model = LanguageModel(vocab_size)
-    print(f"Using: {device}")
-    
-    optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
     
     while True:
         try:
-            print('Loading existing model parameters...')
-            with open('model-txt-sum.pkl', 'rb') as voca:
-                model = pickle.load(voca)
+            print('Loading model parameters...')
+            with open('model-txt-sum.pkl', 'rb') as f:
+                model = pickle.load(f)
             print('Loaded successfully!')
             m = model.to(device)
         except FileNotFoundError:
             print("Model does not exist yet!")
-            print("Creating new model...")
+            print("You need to train your model first...")
+            print("Use TrainTextSum.py to train your model!")
             break
         else:
-            break
-
-    for iter in range(max_iters):
-        print(iter)
-        if iter % eval_iters == 0:
-            print("Calculating loss...")
-            losses = estimate_loss(model, max_iters, encode)
-            print(f"Iteration: {iter}, Training loss: {losses['train']:.3f}, Validation loss: {losses['validate']:.3f}")
-            
-
-        xb, yb = get_batch('train', encode)
-
-        #Wylicz loss
-        logits, loss = model.forward(xb, yb)
-        optimizer.zero_grad(set_to_none=True)
-        loss.backward()
-        optimizer.step()
+            prompt = input("Enter Prompt:\n")
+            if prompt == "KONIEC":
+                break
+            context = torch.tensor(encode(prompt), dtype=torch.long, device=device)
+            generated_chars = decode(m.generate(context.unsqueeze(0), max_new_tokens=150)[0].tolist())
+            print(f'Completion:\n{generated_chars}')
+            print("Type KONIEC to close the program\n")
         
-    with open('model-txt-sum.pkl', 'wb') as vocab:
-        pickle.dump(model, vocab)
-    print('END: Model saved successfully!')
-    
 if __name__ == '__main__':
     main()

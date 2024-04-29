@@ -9,20 +9,25 @@ import argparse
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 batch_size = 128
 block_size = 128
-max_iters = 101
+max_iters = 21
 learning_rate = 1e-4
-eval_iters = 50
+eval_iters = 20
+
+#n_embd - Wymiar wektorow i ukrytych stanow
 n_embd = 384
+#n_head - ilosc "heads" - mechanizmow/warstw wykonujacych okreslone zadanie
 n_head = 1
 n_layer = 1
 dropout = 0.2
 chars = ""
     
 class Head(nn.Module):
-    """ one head of self-attention """
+    """One head of self-attention"""
 
     def __init__(self, head_size):
         super().__init__()
+        #super() pozwala na przejecie zmiennych z inicjalizacji klasy-rodzica (tutaj nn.Module) 
+        
         self.key = nn.Linear(n_embd, head_size, bias=False)
         self.query = nn.Linear(n_embd, head_size, bias=False)
         self.value = nn.Linear(n_embd, head_size, bias=False)
@@ -36,52 +41,59 @@ class Head(nn.Module):
         B,T,C = x.shape
         k = self.key(x)   # (B,T,hs)
         q = self.query(x) # (B,T,hs)
-        # compute attention scores ("affinities")
-        wei = q @ k.transpose(-2,-1) * k.shape[-1]**-0.5 # (B, T, hs) @ (B, hs, T) -> (B, T, T)
+        # Oblicz wartosci uwagi ("affinities" - "podobienstwo, pokrewienstwo")
+        wei = q @ k.transpose(-2,-1) * k.shape[-1]**-0.5 # (B, T, hs) @ (B, hs, T) -> (B, T, T) mnozenie macierzy
         wei = wei.masked_fill(self.tril[:T, :T] == 0, float('-inf')) # (B, T, T)
         wei = F.softmax(wei, dim=-1) # (B, T, T)
         wei = self.dropout(wei)
-        # perform the weighted aggregation of the values
+
+        # Dokonaj wazonej agregacji (laczenia w calosci) wartosci 
         v = self.value(x) # (B,T,hs)
         out = wei @ v # (B, T, T) @ (B, T, hs) -> (B, T, hs)
         return out
 
 class MultiHeadAttention(nn.Module):
-    """ multiple heads of self-attention in parallel """
+    """Multiple heads of self-attention in parallel"""
 
     def __init__(self, num_heads, head_size):
         super().__init__()
+        
         self.heads = nn.ModuleList([Head(head_size) for _ in range(num_heads)])
         self.proj = nn.Linear(head_size * num_heads, n_embd)
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, x):
-        out = torch.cat([h(x) for h in self.heads], dim=-1) # (B, T, F) -> (B, T, [h1, h1, h1, h1, h2, h2, h2, h2, h3, h3, h3, h3])
+        out = torch.cat([h(x) for h in self.heads], dim=-1) 
+        # (B, T, F) -> (B, T, [h1, h1, h1, h1, h2, h2, h2, h2, h3, h3, h3, h3])
+        
         out = self.dropout(self.proj(out))
         return out
     
 
 class FeedFoward(nn.Module):
-    """ a simple linear layer followed by a non-linearity """
+    """Simple linear layer followed by a non-linearity"""
 
     def __init__(self, n_embd):
         super().__init__()
+        
         self.net = nn.Sequential(
             nn.Linear(n_embd, 4 * n_embd),
             nn.ReLU(),
             nn.Linear(4 * n_embd, n_embd),
             nn.Dropout(dropout),
-        )
+            )
 
     def forward(self, x):
         return self.net(x)
     
-class Block(nn.Module):
-    """ Transformer block: communication followed by computation """
+class TransBlock(nn.Module):
+    """Transformer block: communication followed by computation"""
 
     def __init__(self, n_embd, n_head):
-        # n_embd: embedding dimension, n_head: the number of heads we'd like
+        # n_embd: wymiar wektorow
+        # n_head: ilosc glow (warstw obliczeniowych)
         super().__init__()
+        
         head_size = n_embd // n_head
         self.sa = MultiHeadAttention(n_head, head_size)
         self.ffwd = FeedFoward(n_embd)
@@ -95,13 +107,14 @@ class Block(nn.Module):
         x = self.ln2(x + y)
         return x
     
-class GPTLanguageModel(nn.Module):
+class LanguageModel(nn.Module):
     def __init__(self, vocab_size):
         super().__init__()
+        
         self.token_embedding_table = nn.Embedding(vocab_size, n_embd)
         self.position_embedding_table = nn.Embedding(block_size, n_embd)
-        self.blocks = nn.Sequential(*[Block(n_embd, n_head=n_head) for _ in range(n_layer)])
-        self.ln_f = nn.LayerNorm(n_embd) # final layer norm
+        self.blocks = nn.Sequential(*[TransBlock(n_embd, n_head=n_head) for _ in range(n_layer)])
+        self.ln_f = nn.LayerNorm(n_embd)
         self.lm_head = nn.Linear(n_embd, vocab_size)
         self.apply(self._init_weights)
 
@@ -118,13 +131,13 @@ class GPTLanguageModel(nn.Module):
         
         B, T = index.shape
         
-        # idx and targets are both (B,T) tensor of integers
-        tok_emb = self.token_embedding_table(index) # (B,T,C)
-        pos_emb = self.position_embedding_table(torch.arange(T, device=device)) # (T,C)
-        x = tok_emb + pos_emb # (B,T,C)
-        x = self.blocks(x) # (B,T,C)
-        x = self.ln_f(x) # (B,T,C)
-        logits = self.lm_head(x) # (B,T,vocab_size)
+        # idx i targets (B,T) sa tensorami liczb calkowitych
+        tok_emb = self.token_embedding_table(index) #(B,T,C)
+        pos_emb = self.position_embedding_table(torch.arange(T, device=device)) #(T,C)
+        x = tok_emb + pos_emb #(B,T,C)
+        x = self.blocks(x) #(B,T,C)
+        x = self.ln_f(x) #(B,T,C)
+        logits = self.lm_head(x) #(B,T,vocab_size)
         
         if targets is None:
             loss = None
@@ -137,42 +150,44 @@ class GPTLanguageModel(nn.Module):
         return logits, loss
     
     def generate(self, index, max_new_tokens):
-        # index is (B, T) array of indices in the current context
+        # Index to lista (B, T) indeksow w aktualnym kontekscie
         for _ in range(max_new_tokens):
 
-            # get the predictions
+            # Znajdz predykcje
             logits, loss = self.forward(index, device)
-            # focus only on the last time step
-            logits = logits[:, -1, :] # becomes (B, C)
-            # apply softmax to get probabilities
-            probs = F.softmax(logits, dim=-1) # (B, C)
-            # sample from the distribution
-            index_next = torch.multinomial(probs, num_samples=1) # (B, 1)
-            # append sampled index to the running sequence
-            index = torch.cat((index, index_next), dim=1) # (B, T+1)
+            # Skup sie na ostatnim kroku czasowym - staje sie (B, C)
+            logits = logits[:, -1, :] 
+            # Uzyj softmax dla znalezienia prawdopodobienstw (softmax - znormalizowana funkcja wykladnicza) - (B, C)
+            probs = F.softmax(logits, dim=-1)
+            # Pobierz probke z rozkladu - (B, 1)
+            index_next = torch.multinomial(probs, num_samples=1) 
+            # Dodaj pobrane indeksy do biezacej sekwencji - (B, T+1)
+            
+            index = torch.cat((index, index_next), dim=1) 
+            #torch.cat - Concatenates the given sequence of seq tensors in the given dimension. 
+            # All tensors must either have the same shape (except in the concatenating dimension) or be a 1-D empty tensor with size (0,).
         return index
 
 
 
 def get_random_chunk(split, encode):
-    # memory map for using small snippets of text from a single file of any size
-    
+    # Memory map dla malych wycinkow tekstu z pojedynczego pliku o dowolnym rozmiarze
     filename = "train_split.txt" if split == 'train' else "validate_split.txt"
 
     with open(filename, 'rb') as f:
         with mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ) as mm:
-            # Determine the file size and a random position to start reading
+            # Ustal rozmiar pliku i losowa pozycje startowa do czytania
             file_size = len(mm)
             start_pos = random.randint(0, (file_size) - block_size*batch_size)
 
-            # Seek to the random position and read the block of text
+            # Szukaj losowej pozycji i sczytaj blok tekstu
             mm.seek(start_pos)
             block = mm.read(block_size*batch_size-1)
 
-            # Decode the block to a string, ignoring any invalid byte sequences
+            # Dekoduj blok na string, ignoruj bledne sekwencje bajtow
             decoded_block = block.decode('utf-8', errors='ignore').replace('\r', '')
             
-            # Train and test splits
+            # Trenuj i testuj odcinki (splits)
             data = torch.tensor(encode(decoded_block), dtype=torch.long)
             
     return data
@@ -201,18 +216,18 @@ def estimate_loss(model, eval_iters, encode):
 
 def main():    
     print("Starting...")
-    with open("vocab.txt", 'r', encoding='utf-8') as f:
-        text = f.read()
-        chars = sorted(list(set(text)))
+    with open("vocab.txt", 'r', encoding='utf-8') as voca:
+        vocabulary = voca.read()
+        chars = sorted(list(set(vocabulary)))
             
     vocab_size = len(chars)
     
-    string_to_int = { ch:i for i,ch in enumerate(chars) }
-    int_to_string = { i:ch for i,ch in enumerate(chars) }
-    encode = lambda s: [string_to_int[c] for c in s]
-    #decode = lambda l: ''.join([int_to_string[i] for i in l])
+    string_int_dict = { ch:i for i,ch in enumerate(chars) }
+    int_string_dict = { i:ch for i,ch in enumerate(chars) }
+    encode = lambda string: [string_int_dict[char] for char in string]
+    #decode = lambda num: ''.join([int_string_dict[i] for i in num])
     
-    model = GPTLanguageModel(vocab_size)
+    model = LanguageModel(vocab_size)
     print(f"Using: {device}")
     
     optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
@@ -220,8 +235,8 @@ def main():
     while True:
         try:
             print('Loading existing model parameters...')
-            with open('model-txt-sum.pkl', 'rb') as f:
-                model = pickle.load(f)
+            with open('model-txt-sum.pkl', 'rb') as voca:
+                model = pickle.load(voca)
             print('Loaded successfully!')
             m = model.to(device)
         except FileNotFoundError:
@@ -238,17 +253,17 @@ def main():
             losses = estimate_loss(model, max_iters, encode)
             print(f"Iteration: {iter}, Training loss: {losses['train']:.3f}, Validation loss: {losses['validate']:.3f}")
             
-        #get data
+
         xb, yb = get_batch('train', encode)
 
-        #evaluate loss
+        #Wylicz loss
         logits, loss = model.forward(xb, yb)
         optimizer.zero_grad(set_to_none=True)
         loss.backward()
         optimizer.step()
         
-    with open('model-txt-sum.pkl', 'wb') as f:
-        pickle.dump(model, f)
+    with open('model-txt-sum.pkl', 'wb') as vocab:
+        pickle.dump(model, vocab)
     print('END: Model saved successfully!')
     
 if __name__ == '__main__':

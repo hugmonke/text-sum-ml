@@ -9,3 +9,7 @@ W miarę możliwości chcemy osiągnąć możliwie najlepsze zrozumienie mechani
 
 FH, NB, WO, JJ
 
+SOURCES & LITERATURE:
+https://nnfs.io/
+https://lena-voita.github.io/nlp_course/seq2seq_and_attention.html
+https://arxiv.org/pdf/1409.0473

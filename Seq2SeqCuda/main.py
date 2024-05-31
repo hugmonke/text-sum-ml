@@ -192,7 +192,7 @@ def main():
     summaries = data['Summary'].astype(str).tolist()
 
     data_size = len(articles)
-    train_size = int(0.3*data_size)
+    train_size = int(0.5*data_size)
     articles = articles[:train_size]
     summaries = summaries[:train_size]
     print(f"Data loaded! Train size is: {train_size}\n")

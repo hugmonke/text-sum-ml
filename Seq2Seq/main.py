@@ -6,7 +6,7 @@ from torch.autograd import Variable
 from torch.nn.utils import clip_grad_norm_
 #from torch.utils.data import DataLoader
 from torch.optim.optimizer import Optimizer
-from torch.optim.lr_scheduler import CosineAnnealingLR
+from torch.optim.lr_scheduler import LRScheduler
 import numpy as np
 import sys
 import os

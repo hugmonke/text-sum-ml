@@ -8,6 +8,10 @@ W miarę możliwości chcemy osiągnąć możliwie najlepsze zrozumienie mechani
 
 
 FH, NB, WO, JJ
+# Requirements
+Required libraries are to be found in lib_requirements.txt
+https://www.kaggle.com/datasets/sawarn69/glove6b100dtxt
+
 
 SOURCES & LITERATURE:  
 https://nnfs.io/  

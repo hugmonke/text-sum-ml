@@ -25,7 +25,7 @@ def prepare_text(text, text_data):
     # tokenizuje i konwertuje na idx
     text_transformed = text_data.transform([text], tokenize=True)
     text_padded = np.array([np.array(t, dtype=np.int64) for t in text_transformed])
-    return torch.tensor(text_padded).transpose(0, 1).cuda()
+    return torch.tensor(text_padded).transpose(0, 1).cpu()
 
 def decode_output(output, idx2word):
 

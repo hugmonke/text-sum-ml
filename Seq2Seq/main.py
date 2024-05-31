@@ -22,7 +22,23 @@ import glove
 """
 RUN THIS FILE TO START TRAINING THE BOT
 """
+class CosineAnnealingLR(LRScheduler):
+    def __init__(self, optimizer, T_max, eta_min=0, last_epoch=-1):
+        self.T_max = T_max
+        self.eta_min = eta_min
+        self.optimizer = optimizer
+        super(CosineAnnealingLR, self).__init__(optimizer, last_epoch)
 
+    def get_lr(self):
+        return [self.eta_min + (base_lr - self.eta_min) * (1 + np.cos(np.pi * self.last_epoch / self.T_max)) / 2 for base_lr in self.base_lrs]
+    
+    def _reset(self, epoch, T_max):
+        """
+        Resets cycle iterations.
+        Optional boundary/step size adjustment.
+        """
+        return CosineAnnealingLR(self.optimizer, self.T_max, self.eta_min, last_epoch=epoch)
+        
 def seq2seq_loss(input, target):
     sl, bs = target.size()
     sl_in, bs_in, nc = input.size()

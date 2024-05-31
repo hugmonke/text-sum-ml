@@ -13,7 +13,7 @@ Required libraries are to be found in lib_requirements.txt
 https://www.kaggle.com/datasets/sawarn69/glove6b100dtxt
 
 
-# SOURCES & LITERATURE:  
-https://nnfs.io/  
+# Sources & Literature:  
+"Harrison Kinsley & Daniel Kukieła: Neural Networks From Scratch in Python" https://nnfs.io/  
 https://lena-voita.github.io/nlp_course/seq2seq_and_attention.html  
 https://arxiv.org/pdf/1409.0473  

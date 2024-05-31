@@ -119,7 +119,8 @@ def fit(model, train_loader, opt_fn=None, learning_rate=1e-5,
                         save_checkpoint(state, save_path=save_path)
             
             print_output.append(val_loss)
-
+        else: 
+            print("No validate loader!\n")
         print('\n', print_output)
 
         if epoch_ % cycle_len == 0:
@@ -210,7 +211,9 @@ def main():
     data_size = len(articles)
     train_size = int(0.3*data_size)
     articles = articles[:train_size]
+    articles_train = articles[train_size:int(1.5*train_size)]
     summaries = summaries[:train_size]
+    summaries_train = summaries[train_size:int(1.5*train_size)]
     print(f"Data loaded! Train size is: {train_size}\n")
     
     # Creates TextDataSet object
@@ -221,6 +224,8 @@ def main():
     # train_text and train_summary are now matrices with padding
     train_article = text_data.fit_transform(articles)
     train_summary = text_data.fit_transform(summaries)
+    test_article = text_data.fit_transform(articles)
+    test_summary = text_data.fit_transform(summaries)
     print("Done!\n")
     # If OUTPUT_PATH doesn't exist - mkdir
     ensure_dir(OUTPUT_PATH)
@@ -244,9 +249,11 @@ def main():
     
     train_article = [np.array(tr, dtype=np.int64) for tr in train_article]
     train_summary = [np.array(su, dtype=np.int64) for su in train_summary]
+    test_article = [np.array(tr, dtype=np.int64) for tr in test_article]
+    test_summary = [np.array(su, dtype=np.int64) for su in test_summary]
     batch_size = 32
     train_loader = create_dataloader(train_article, train_summary, batch_size=batch_size)
-
+    test_loader = create_dataloader(test_article, test_summary, batch_size=batch_size)
     # Lists of letters used to encode and decode
     idx2word_encode = text_data.idx2word 
     idx2word_decode = text_data.idx2word
@@ -270,7 +277,7 @@ def main():
     SAVE = True
     print(f"Training params:\n Learning rate = {lr}\n Epochs = {epochs}\n Cycle length = {cycle_len}\n Saving = {SAVE}\n")
     fit(model, train_loader, learning_rate=lr, epochs=epochs, cycle_len=cycle_len, 
-        val_loader=None, SAVE=SAVE, save_path=os.path.join(OUTPUT_PATH, 'checkpoint.pth.tar'), 
+        val_loader=test_loader, SAVE=SAVE, save_path=os.path.join(OUTPUT_PATH, 'checkpoint.pth.tar'), 
         print_period=100, grad_clip=0.0)
     
     

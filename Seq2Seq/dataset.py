@@ -3,12 +3,13 @@ import os
 import pickle
 from torch.utils.data import DataLoader, Dataset
 import torch
+import numpy as np
 
 class TextDataset(Dataset):
     def __init__(self, text, summary, transpose=False):
         self.transpose = transpose
-        self.text = [torch.tensor(t, dtype=torch.long) for t in text]
-        self.summary = [torch.tensor(s, dtype=torch.long) for s in summary]
+        self.text = torch.tensor(text)
+        self.summary = torch.tensor(summary)
         
     def __getitem__(self, idx):
         if self.transpose:
@@ -18,7 +19,20 @@ class TextDataset(Dataset):
     
     def __len__(self): 
         return len(self.summary)
-
+class TextDataLoader(Dataset):
+    def __init__(self, text, summary, transpose=False):
+        self.transpose = transpose
+        self.text = text
+        self.summary = summary
+        
+    def __getitem__(self, idx):
+        if self.transpose:
+            return self.text[idx].T, self.summary[idx].T
+        else:
+            return self.text[idx], self.summary[idx]
+    
+    def __len__(self): 
+        return len(self.summary)
 def create_dataloader(text: list, summary: list, batch_size: int=32, shuffle: bool=True, transpose: bool=False) -> DataLoader:
     """
     Creates an iterable data set.

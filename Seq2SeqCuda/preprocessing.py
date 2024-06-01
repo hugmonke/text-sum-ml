@@ -84,15 +84,19 @@ class TextDataSet:
         return text
         
     def fit_transform(self, text: str, tokenize: bool=True) -> np.array:
-        text = self.fit(text, tokenize=tokenize)
+        text = self.fit(text, tokenize=tokenize) #[['sample', 'input', '.'], ['of', 'text', '...']]
         text_padded = self.internal_transform(text, tokenize=False)
         return np.array(text_padded, dtype=object)
 
     def internal_transform(self, text: str, tokenize: bool=True) -> np.array:
         if tokenize:       
             text = self.tokenizer.cpu_flatlist(text)
-        text_ints = [[self.word2idx[i] for i in sent] for sent in text]
-        text_padded = keras.utils.pad_sequences(text_ints, maxlen=self.maxlen, padding=self.padding, value=self.pad_int)
+        text_ints = [[self.word2idx[i] for i in sent] for sent in text] # [[7, 23, 131], [5, 6, 7]]
+        
+        # Pads sequences to the same length.
+        text_padded = keras.preprocessing.sequence.pad_sequences(text_ints, maxlen=self.maxlen,
+                                                padding=self.padding, value=self.pad_int) 
+                                                #[[4075 4075 4075 69 155 4] [4075 4075 4075 6445 36 4]]
         return np.array(text_padded, dtype=object)
     
     def transform(self, text: str, tokenize: bool=True, word2idx=None, maxlen=None, padding=None) -> np.array:
@@ -105,22 +109,22 @@ class TextDataSet:
         if padding:
             self.padding = padding
         text_ints = [[self.word2idx[i] for i in sent] for sent in text]
-        text_padded = keras.utils.pad_sequences(text_ints, maxlen=self.maxlen, padding=self.padding, value=self.pad_int)
-        return np.array(text_padded, dtype=object)
+        text_padded = keras.preprocessing.sequence.pad_sequences(text_ints, maxlen=self.maxlen, padding=self.padding, value=self.pad_int)
+        return np.array(text_padded)
     
-# def limit_unk_vocab(train_text: str, train_summary: str, all_text_model, max_unk_text: int=1, max_unk_summary: int=1) -> np.array:
-#     train_text_reduced = []
-#     train_summary_reduced = []
+def limit_unk_vocab(train_text: str, train_summary: str, all_text_model, max_unk_text: int=1, max_unk_summary: int=1) -> np.array:
+    train_text_reduced = []
+    train_summary_reduced = []
 
-#     for txt, sumy in zip(train_text, train_summary):
-#         unk_txt = len([x for x in txt if x == all_text_model.word2idx['unk']])
-#         unk_sumy = len([x for x in sumy if x == all_text_model.word2idx['unk']])
-#         if (unk_txt <= max_unk_text) and (unk_sumy <= max_unk_summary):
-#             train_text_reduced.append(txt.tolist())
-#             train_summary_reduced.append(sumy.tolist())
+    for txt, sumy in zip(train_text, train_summary):
+        unk_txt = len([x for x in txt if x == all_text_model.word2idx['unk']])
+        unk_sumy = len([x for x in sumy if x == all_text_model.word2idx['unk']])
+        if (unk_txt <= max_unk_text) and (unk_sumy <= max_unk_summary):
+            train_text_reduced.append(txt.tolist())
+            train_summary_reduced.append(sumy.tolist())
         
-#     assert(len(train_text_reduced) == len(train_summary_reduced))
-#     print('New text size: ', len(train_text_reduced))
-#     print('New summary size: ', len(train_summary_reduced))
+    assert(len(train_text_reduced) == len(train_summary_reduced))
+    print('New text size: ', len(train_text_reduced))
+    print('New summary size: ', len(train_summary_reduced))
 
-#     return np.array(train_text_reduced, dtype=object), np.array(train_summary_reduced, dtype=object)
+    return np.array(train_text_reduced, dtype=np.int64), np.array(train_summary_reduced, dtype=np.int64)

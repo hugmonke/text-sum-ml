@@ -35,17 +35,17 @@ def create_embeddings(vect: dict, idx2word: list, embedding_size: int, pad_idx: 
     # Embedding is a numerical representation of an object
     embedding = nn.Embedding(len(idx2word), embedding_size, padding_idx=pad_idx)
     weights = embedding.weight.data
-    embedding.weight.requires_grad = False
+    
     
     for i, word in enumerate(idx2word):
         try:
             # Creates a tensor from a numpy array
-            #weights[i] = torch.from_numpy(vect[word] * 3)
-            weights[i] = torch.from_numpy(vect[word])
+            weights[i] = torch.from_numpy(vect[word] * 3)
+            #weights[i] = torch.from_numpy(vect[word])
         except KeyError:
             pass
 
-    #embedding.weight.requires_grad = False
+    embedding.weight.requires_grad = False
     return embedding
 
 

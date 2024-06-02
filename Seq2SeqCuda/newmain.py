@@ -307,12 +307,19 @@ def main():
     activation = F.tanh
     em_sz_enc=100
     
-    loadzik = False
+    loadzik = True
     if loadzik:
         model = Seq2SeqWithAttention(vecs_enc=global_vectors, idx2word_enc=all_text_model.idx2word, emb_arg_enc=em_sz_enc, 
                                 vecs_dec=global_vectors, idx2word_dec=all_text_model.idx2word, emb_arg_dec=em_sz_enc, 
                                 num_hidden=num_hidden, outsequence_len=maxlen_summary, num_layers=num_layers, 
                                 activation=activation, pad_idx=all_text_model.word2idx['_pad_']).cuda()
+        optimizer = optim.RMSprop(filter(lambda p: p.requires_grad, model.parameters()), lr=1e-4)
+        checkpoint = torch.load('ProcessedData/checkpoint.pth.tar')
+        start_epoch = checkpoint['epoch']
+        best_val_loss = checkpoint['best_val_loss']
+        model.load_state_dict(checkpoint['state_dict'])
+        optimizer.load_state_dict(checkpoint['optimizer'])
+        print('Restoring model...')
         for idx in range(100, 110):
             generate_example(model, text=train_text, summary=train_summary, idx=idx, plot_attention=True, 
                      pad=all_text_model.word2idx['_pad_'], unk=all_text_model.word2idx['_unk_'])

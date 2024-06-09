@@ -4,9 +4,7 @@ import torch.nn.functional as F
 from torch.nn.utils import clip_grad_norm_
 from torch.optim.lr_scheduler import LRScheduler
 from sklearn.model_selection import train_test_split
-#import torch.nn as nn
-#from torch.utils.data import DataLoader
-#from torch.optim.optimizer import Optimizer
+
 import os
 import sys
 import pickle
@@ -233,6 +231,7 @@ def main(subset = False,
         maxlen_summary = 6,
         max_unk_text = 1,
         max_unk_summary = 1,
+        learning_rate=1e-5,
         DATA_FILE = "Reviews.csv",
         OUTPUT_PATH = "ProcessedData/",
         GLOVE_PATH = "glove.6B.100d.txt",
@@ -301,7 +300,7 @@ def main(subset = False,
                 train_loader, 
                 save_path=os.path.join(OUTPUT_PATH, 'checkpoint.pth.tar'),
                 return_history=False,
-                learning_rate=1e-5, 
+                learning_rate=learning_rate, 
                 print_period=100,
                 val_loader=test_loader, 
                 tr_ratios=tr_ratios,
@@ -324,6 +323,7 @@ if __name__ == '__main__':
     maxlen_summary = 5
     max_unk_text = 1
     max_unk_summary = 1
+    learning_rate=1e-3
     DATA_FILE = "Reviews.csv"
     OUTPUT_PATH = "ProcessedData/"
     GLOVE_PATH = "glove.6B.100d.txt"
@@ -338,6 +338,7 @@ if __name__ == '__main__':
         maxlen_summary,
         max_unk_text,
         max_unk_summary,
+        learning_rate,
         DATA_FILE,
         OUTPUT_PATH,
         GLOVE_PATH,

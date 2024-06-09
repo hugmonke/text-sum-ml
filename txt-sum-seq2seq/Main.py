@@ -154,10 +154,9 @@ def fit(model=None,
     all_lr = []
     total_loss = 0.0
     best_val_loss = np.inf
-    all_train_loss = [0] * n_epochs
+    all_train_loss = []
     num_print_periods = 0
     all_validation_loss = []
-    
  
     try: #to restore an existing checkpoint
         checkpoint = torch.load(save_path)
@@ -188,7 +187,7 @@ def fit(model=None,
                                 num_print_periods,
                                 )
         
-        all_train_loss[epoch] = train_loss
+        all_train_loss.append(train_loss)
         print_output = [epoch, train_loss]
     
         val_loss = validate(model, val_loader)
@@ -233,7 +232,7 @@ def main(subset = False,
         maxlen_text = 100,
         maxlen_summary = 6,
         max_unk_text = 1,
-        max_unk_summary = 0,
+        max_unk_summary = 1,
         DATA_FILE = "Reviews.csv",
         OUTPUT_PATH = "ProcessedData/",
         GLOVE_PATH = "glove.6B.100d.txt",
@@ -258,8 +257,9 @@ def main(subset = False,
 
     train_summary = all_text_model.transform(train_df.Summary.values, word2idx=all_text_model.word2idx, maxlen=maxlen_summary, padding='post')
     test_summary = all_text_model.transform(test_df.Summary.values, word2idx=all_text_model.word2idx, maxlen=maxlen_summary, padding='post')
-    train_text, train_summary = limit_unk_vocab(train_text, train_summary, all_text_model, max_unk_text, max_unk_summary)
-    
+    #train_text, train_summary = limit_unk_vocab(train_text, train_summary, all_text_model, max_unk_text, max_unk_summary)
+    print('Text size: ', len(train_text))
+    print('Summary size: ', len(train_summary))
     print("Creating pickle files...")
     try:
         open(GLOVE_PATH, 'r', encoding='utf-8')
@@ -271,11 +271,16 @@ def main(subset = False,
         Glove.save_glove_vectors(glove_vectors, VEC_FILE)
     with open(VEC_FILE, 'rb') as glove_pkl:
         global_vectors = pickle.load(glove_pkl)
-
-    train_loader = TextLoad.to_dataloader_(train_text, train_summary, batch_size = 32)
-    test_loader = TextLoad.to_dataloader_(test_text, test_summary, batch_size = 32)
         
+    if subset > 0:
+        train_loader = TextLoad.to_dataloader_(train_text[:subset], train_summary[:subset], batch_size = 32)
+        test_loader = TextLoad.to_dataloader_(test_text[:subset], test_summary[:subset], batch_size = 32) 
+    else:
+        train_loader = TextLoad.to_dataloader_(train_text, train_summary, batch_size = 32)
+        test_loader = TextLoad.to_dataloader_(test_text, test_summary, batch_size = 32)
         
+    print('Training data size: ', len(train_loader)) 
+    print('Testing data size: ', len(test_loader)) 
     model = Seq2SeqWithAttention(
                                 num_hid_layers=num_hidden, 
                                 vect_encoder=global_vectors, 
@@ -289,12 +294,14 @@ def main(subset = False,
                                 ).cpu()
         
     tr_ratios = np.concatenate([np.array([0.9]*50), np.linspace(0.9, 0, 50)])
+    
+    # None if return_history = False
     history = fit(
                 model, 
                 train_loader, 
                 save_path=os.path.join(OUTPUT_PATH, 'checkpoint.pth.tar'),
                 return_history=False,
-                learning_rate=1e-4, 
+                learning_rate=1e-5, 
                 print_period=100,
                 val_loader=test_loader, 
                 tr_ratios=tr_ratios,
@@ -304,18 +311,19 @@ def main(subset = False,
                 pad=all_text_model.word2idx['_pad_']
                 )
     print("Done!\n")    
+    
 if __name__ == '__main__':
     print("Launching...\n")
-    subset = False, 
+    subset = 40000 #set subset to 0 or less if no subset is needed
     num_hidden = 256
     num_layers = 2
     activation = F.tanh
     em_sz_enc = 100
     max_vocab_text = 10000
     maxlen_text = 100
-    maxlen_summary = 6
+    maxlen_summary = 5
     max_unk_text = 1
-    max_unk_summary = 0
+    max_unk_summary = 1
     DATA_FILE = "Reviews.csv"
     OUTPUT_PATH = "ProcessedData/"
     GLOVE_PATH = "glove.6B.100d.txt"

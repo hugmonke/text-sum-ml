@@ -4,7 +4,8 @@ Projekt na seminarium "Matematyka dla przemysłu". Celem projektu jest stworzeni
 AI opierać się będzie na bibliotece PyTorch.
 
 Najważniejsze w projekcie jest dla nas dogłębne zrozumienie problemu i zapoznanie się z technikami NLP oraz poznanie bilioteki PyTorch.
-W miarę możliwości chcemy osiągnąć możliwie najlepsze zrozumienie mechanizmów i metod matematycznych na których opiera się NLP.
+W miarę możliwości chcemy osiągnąć możliwie najlepsze zrozumienie mechanizmów i metod matematycznych na których opiera się NLP.  
+FH, NB, WO, JJ
 
 # Info
 The text summariser uses a Sequence to Sequence algorithm with attention. 
@@ -14,7 +15,7 @@ To generate examples out of data, on which the model was trained, use GenerateEx
 To summarize your own text, use Summarizer.py  
 Remember about pre-trained global vectors!
 
-FH, NB, WO, JJ
+
 # Requirements
 Required libraries are to be found in lib_requirements.txt    
 https://www.kaggle.com/datasets/snap/amazon-fine-food-reviews/data    

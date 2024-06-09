@@ -53,7 +53,7 @@ def generate_example(model,
     y = np.expand_dims(summary[idx], 1)
     x_v = torch.from_numpy(x).long().cpu()
     y_v = torch.from_numpy(y).long().cpu()
-    probs, attentions = model(x_v, y_v, return_attention=True)
+    probs= model(x_v, y_v)
     original_text = get_idx2word(text, idx, all_text_model.idx2word, pad=pad)
     original_summary = get_idx2word(summary, idx, all_text_model.idx2word, pad=pad)
     preds = [all_text_model.idx2word[i] for i in get_max(probs, unk=unk) if i != pad]
@@ -128,9 +128,13 @@ def main(subset = False,
     model.load_state_dict(checkpoint['state_dict'])
     optimizer.load_state_dict(checkpoint['optimizer'])
     for idx in range(400, 405):
-        generate_example(model, train_text=train_text, text=train_text, all_text_model=all_text_model, summary=train_summary, idx=idx, plot_attention=True, 
-                    pad=all_text_model.word2idx['_pad_'], unk=all_text_model.word2idx['_unk_'])       
-    
+        generate_example(model, 
+                         train_text=train_text, 
+                         text=train_text, 
+                         all_text_model=all_text_model, 
+                         summary=train_summary, idx=idx,
+                         pad=all_text_model.word2idx['_pad_'], 
+                         unk=all_text_model.word2idx['_unk_'])       
 if __name__ == '__main__':
     print("Launching...\n")
     subset = False, 

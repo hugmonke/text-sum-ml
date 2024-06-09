@@ -2,9 +2,7 @@ import torch
 import torch.nn.functional as F
 import torch.optim as optim
 from sklearn.model_selection import train_test_split
-#import torch.nn as nn
-#from torch.utils.data import DataLoader
-#from torch.optim.optimizer import Optimizer
+
 import os
 import sys
 import pickle
@@ -64,7 +62,7 @@ def generate_example(model,
     print('MODEL PREDICTION:')
     print(' '.join(preds))
     
-def main(subset = False, 
+def main(
         num_hidden = 256, 
         num_layers = 2, 
         activation = F.tanh, 
@@ -96,8 +94,9 @@ def main(subset = False,
     train_text = all_text_model.transform(train_df.Text.values, word2idx=all_text_model.word2idx, padding='pre')
     
     train_summary = all_text_model.transform(train_df.Summary.values, word2idx=all_text_model.word2idx, maxlen=maxlen_summary, padding='post')
-    train_text, train_summary = limit_unk_vocab(train_text, train_summary, all_text_model, max_unk_text, max_unk_summary)
-    
+    #train_text, train_summary = limit_unk_vocab(train_text, train_summary, all_text_model, max_unk_text, max_unk_summary)
+    print('Text size: ', len(train_text))
+    print('Summary size: ', len(train_summary))
     print("Creating pickle files...")
     try:
         open(GLOVE_PATH, 'r', encoding='utf-8')
@@ -127,31 +126,31 @@ def main(subset = False,
     checkpoint = torch.load('ProcessedData/checkpoint.pth.tar')
     model.load_state_dict(checkpoint['state_dict'])
     optimizer.load_state_dict(checkpoint['optimizer'])
-    for idx in range(400, 405):
+    for idx in range(400, 415):
         generate_example(model, 
                          train_text=train_text, 
                          text=train_text, 
                          all_text_model=all_text_model, 
-                         summary=train_summary, idx=idx,
+                         summary=train_summary, 
+                         idx=idx,
                          pad=all_text_model.word2idx['_pad_'], 
                          unk=all_text_model.word2idx['_unk_'])       
 if __name__ == '__main__':
     print("Launching...\n")
-    subset = False, 
     num_hidden = 256
     num_layers = 2
     activation = F.tanh
     em_sz_enc = 100
     max_vocab_text = 10000
     maxlen_text = 100
-    maxlen_summary = 6
+    maxlen_summary = 5
     max_unk_text = 1
     max_unk_summary = 0
     DATA_FILE = "Reviews.csv"
     OUTPUT_PATH = "ProcessedData/"
     GLOVE_PATH = "glove.6B.100d.txt"
     VEC_FILE = "glove_vectors.pkl"
-    main(subset, 
+    main(
         num_hidden,
         num_layers,
         activation,

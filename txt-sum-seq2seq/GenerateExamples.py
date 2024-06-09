@@ -126,7 +126,7 @@ def main(
     checkpoint = torch.load('ProcessedData/checkpoint.pth.tar')
     model.load_state_dict(checkpoint['state_dict'])
     optimizer.load_state_dict(checkpoint['optimizer'])
-    for idx in range(400, 415):
+    for idx in range(100, 110):
         generate_example(model, 
                          train_text=train_text, 
                          text=train_text, 

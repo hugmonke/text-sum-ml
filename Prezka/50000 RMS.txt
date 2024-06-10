@@ -1,0 +1,64 @@
+ORIGINAL TEXT:
+made with whole grains , and no trans - fats . 
+i was glad they started making them in other " flavors " for variety . 
+i 'm pretty sure i had bought a box of the roasted garlic at the grocery store when
+they first came out and they were not so salty , and had a stronger garlic flavor , 
+so i was disappointed with these . i guess if you love salt , and a milder garlic flavor , 
+these are for you . note they have msg which is a migraine trigger for some people .
+ORIGINAL SUMMARY:
+_ very salty _ eos _
+MODEL PREDICTION:
+and very good _ eos _
+
+ORIGINAL TEXT:
+smooth for my taste . 
+the most prominent flavor is that citric acid " kool - aid " taste , that fake tang after taste . 
+there is barely , and i mean barely a hint of mint in there if you use your imagination . 
+it 's almost like drinking " thick " water to me . 
+that sounds odd i know , but it is very bland but with something in the background . 
+i would definitely need a lot if rum to make this palatable . too bad . 
+i really wanted to like it .
+ORIGINAL SUMMARY:
+_ mild flavor _ eos _
+MODEL PREDICTION:
+_ good ! _ eos _
+
+ORIGINAL TEXT:
+says it is way better than the locally fresh roasted coffee he has been getting . 
+every time he has a cup , he says " this is excellent coffee " . 
+we 've been buying it for a year now and i 'm getting pretty tired of him saying that , but , he is right ! we ca n't use the 2 lbs up very fast so we freeze most of it in glass jars and just take it out and grind it each time we make it . 
+it stays tasting great to the last bean !
+ORIGINAL SUMMARY:
+super coffee ! _ eos _
+MODEL PREDICTION:
+_ delicious ! _ eos _
+
+ORIGINAL TEXT:
+few ( some coworkers and they loved it ! ! reminds me and them of when we were a kid . 
+its the same thing . 3 different flavors . 
+blue raspberry , cherry , and watermelon . 
+the down side is i now have to buy more . 
+the up side is its money well spent . 
+these are the regular ones not the sour ones . 
+which are listed on amazon . 
+so be careful and always review the product carefully before purchasing . 
+i almost made that mistake . which would n't be that bad .
+ORIGINAL SUMMARY:
+! ! ! _ eos _
+MODEL PREDICTION:
+_ yum ! _ eos _
+
+
+ORIGINAL TEXT:
+it is n't over - steeped and allowed to turn bitter . 
+( everyone has a strength preference and so you 'll have to experiment at first , 
+but if you can keep it to no longer than 90 seconds , that should be ideal . ) further , 
+if you have a water that allows you to select temperature , 
+if you use a water temperature right below the boiling point , 
+that smoothness can be extended further . an easy recommend to the tea lover , 
+this tea is one of my favorites . five stars .
+
+ORIGINAL SUMMARY:
+- connoisseur alike _ eos _
+MODEL PREDICTION:
+_ great tea _ eos _

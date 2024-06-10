@@ -1,0 +1,29 @@
+ORIGINAL TEXT:
+it tasted fine , but the dough fell during the final rise , so loaf came out and way too dense . 
+i 'm pretty sure it was n't my error , as all you do is dump the flour mix over a cup of water , 
+followed by a pre - measured pack of yeast on top , and run it on basic . 
+the machine has always produced successful loaves , this one being the only exception thus far . 
+i may give it another try , just to see if it was a bad batch .
+ORIGINAL SUMMARY:
+failed
+MODEL PREDICTION:
+failed the it it ...
+
+ORIGINAL TEXT:
+this product has so much loves this pie even if they pumpkin pie lovers . so easy and tons of flavor .
+ORIGINAL SUMMARY:
+so much flavor
+MODEL PREDICTION:
+not very good ! !
+
+ORIGINAL TEXT:
+a couple crumbs will fall off as i , but that 's okay for me , 
+now that i know . a bit high in calories ( 180 ) , 
+but the number of carbs is low ( 23 , before fiber content figures in ) , 
+so it 's a pretty safe treat when you have blood sugar . 
+it 's a darned tasty treat . i will look for them at my grocer 's in the near future , as the long school year gets . 
+thanks , pamela !       
+ORIGINAL SUMMARY:
+a good for you snack
+MODEL PREDICTION:
+a good 's 's .

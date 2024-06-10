@@ -1,0 +1,19 @@
+ORIGINAL TEXT:
+, and chances are i wo n't get the cold . if i am unable to head off the cold , 
+this tea makes me feel better after one cup . 
+the flavor is enjoyable , unlike some medicinal teas . i am unable to find this in 
+stores near me , so i buy it in bulk ( 6 packs of 15 - count boxes ) , 
+which is also a savings . i supply all of my friends and family with this healthy elixir . 
+i recommend everyone try it when they are feeling under the weather .
+ORIGINAL SUMMARY:
+_ amazing tea _ eos _
+MODEL PREDICTION:
+_ great tea _ eos _
+
+
+ORIGINAL TEXT:
+says it is way better than the locally fresh roasted coffee he has been getting . every time he has a cup , he says " this is excellent coffee " . we 've been buying it for a year now and i 'm getting pretty tired of him saying that , but , he is right ! we ca n't use the 2 lbs up very fast so we freeze most of it in glass jars and just take it out and grind it each time we make it . it stays tasting great to the last bean !
+ORIGINAL SUMMARY:
+super coffee ! _ eos _
+MODEL PREDICTION:
+_ great ! _ eos _

@@ -1,0 +1,56 @@
+ORIGINAL TEXT:
+i really enjoy vita coco 's coconut water products . the taste is light , refreshing and hardly sweet at all . and yes , it is thirst - quenching . however , i do not recommend this larger packaging size . the other tetra packaging for the smaller individual cartons is better for impact . since i lost much of the drink from the leakage on both orders , i can not give a high rating . however , i will give credit where credit is due and amazon has been prompt to respond to my concerns .
+ORIGINAL SUMMARY:
+great product but poor packaging .
+MODEL PREDICTION:
+good , but not too good
+ORIGINAL TEXT:
+is attractive and tasty , so i 'll be continue to purchase them in local markets now . the general consensus around here is that they are even better than the other walkers shortbread cookies we 've tasted , because the tartness and texture of the lemon zest takes the shortbread to the next level . because the others are thicker and less delicate , we 'll continue ordering them from amazon . these thins are a definite winning treat to dunk in a cup of tea or include with a frozen desert . highly recommend these packaged cookies .
+ORIGINAL SUMMARY:
+tart , thin cookies arrived broken
+MODEL PREDICTION:
+, but not a good !
+ORIGINAL TEXT:
+started on a new bottle , and it is much milder and less flavorful than the first two bottles i tried . it is even a different color and consistency ( lighter color and much more watery ) . apparently some batches are a lot thicker and hotter than others . based on the 2nd batch , i am taking away a star . the first batch was 5 - 
+stars for sure , but the 2nd is more like 3 stars since it is n't hot enough to be worth the high price for such a small bottle .
+ORIGINAL SUMMARY:
+if you get a good batch
+MODEL PREDICTION:
+good , but very good !
+ORIGINAL TEXT:
+the cost is fairly reasonable for this relatively expensive nut ( much more than peanuts ) and the taste is quite good -- not as good as their cocoa almonds ( emerald cocoa roast almonds , 11 oz canister ( pack of 4 ) ) , but pretty good . i had to force myself not to consume the packaging ( as well as the contents ) on the 1st sitting . yum . enjoy ! p.s . " you are what you eat " but " sometimes you feel like a nut , sometimes you do n't ! "
+ORIGINAL SUMMARY:
+you ca n't eat just one
+MODEL PREDICTION:
+, but not too very good
+ORIGINAL TEXT:
+of september 10 , 2009 . this is only 5 months ago . also the same reviewer talking about solids in the can may not realize that when coconut milk is colder ( below 76 degrees ) , the oil will . if you want it all liquid and smooth put the can in a pan of warm water for a while . this is an excellent product , even better with amazon 's special pricing and free shipping for recurring orders . this is also backed by amazon 's excellent customer service noted by the unhappy customer .
+ORIGINAL SUMMARY:
+best tasting - no dents !
+MODEL PREDICTION:
+organic , but not good !
+ORIGINAL TEXT:
+my favorite boxed mac n ' cheese products since i was a kid , but there was something about this that made me nauseous after about 3 or 4 bites . it also became extremely sticky after a few minutes of sitting on my plate . that never usually happens with regular velveeta shells and cheese . i do n't know if perhaps the " formula " is different for this , but it just was n't very good and the richness became overwhelming fast . overall , i 'm going to stick to regular velveeta shells and cheese .
+ORIGINAL SUMMARY:
+, stick to regular velveeta .
+MODEL PREDICTION:
+- my favorite '' ! !
+ORIGINAL TEXT:
+reviewers said their dogs worked on it for a very long time . unfortunately , this was not the case with my 100 lb . . he was pulling off large shreds within 2 minutes , had it broken in half within 10 minutes and chewed one half down to the knot in less than an hour . while i do n't think this is a bad quality bone , the rawhide 
+is not as thick as other bones i have purchased , which i am assuming is why he was able to tear it apart so fast .
+ORIGINAL SUMMARY:
+long with a very aggressive chewer
+MODEL PREDICTION:
+and but not too good .
+ORIGINAL TEXT:
+reaction in animals with sensitivities ) and they could not give me an answer . i 'm a fish snob from alaska but aside from the wild vs. farmed , i was very concerned that they had no idea the source of their ingredients . this food gets a plus for the fact that it 's grain - free . i appreciate the direction this company is moving . however , it is not a premium dog food in my mind . be cautious of any pet food company that does n't know where their ingredients come from !
+ORIGINAL SUMMARY:
+of your dog 's food !
+MODEL PREDICTION:
+for a a dog food !
+ORIGINAL TEXT:
+you can add as much or as little as you like to each individual glass of water , so you are in total control of the strength of the flavor . unfortunately that can also be its main drawback , as it 's easy to go through a bottle of mio much more quickly than a package of crystal light or an equivalent powder - based drink . even if it does go faster than other options , i still recommend giving it a try if you want a new sugar free drink and like a light peach taste .
+ORIGINAL SUMMARY:
+the strength of the flavor .
+MODEL PREDICTION:
+, but not a good product
